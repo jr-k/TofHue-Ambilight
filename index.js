@@ -13,9 +13,21 @@ var T_END, T_START = new Date().getTime();
 //	console.log(rgb);
 //	T_END = new Date().getTime();
 //	console.log('It tooks:', T_END - T_START, 'ms');
-//	Ambilight.changeLightColor(2, rgb.r,rgb.g,rgb.b);
+////	Ambilight.changeLightColor(2, rgb);
+//	Ambilight.changeLightColorFromSwatches(2, rgb);
 //	T_START = T_END;
 //},refreshRate);
+
+
+function upd() {
+	rgb = Scanner.scanOnCenterScreen({averageMode: false, deltaX:400});
+	console.log(rgb);
+	Ambilight.changeLightColorFromSwatches(2, rgb, function(){
+		setTimeout(upd,10);
+	});
+}
+
+upd();
 
 
 
@@ -48,18 +60,5 @@ var T_END, T_START = new Date().getTime();
 //Ambilight.getLightBulbs(function(r){
 //		console.log(r);
 //});
-//var d = ColorManipulator.getClosestColor(["FF0000","0000FF"],"FF11FF");
-//console.log(d);
 
-var rgb = [111,111,111];
 
-for (var i=0;i<5;i++) {
-	Ambilight.changeLightColor(2, {
-		r: rgb[0],
-		g: rgb[1],
-		b: rgb[2],
-		brightness:0
-	}, function (a) {
-		console.log(a);
-	});
-}

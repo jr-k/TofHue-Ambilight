@@ -18,7 +18,8 @@ var defaultChangeLightColorArgs = {
 	g: 0,
 	b: 0,
 	brightness: 50,
-	transition: 100
+	transition: 150,
+	turnOn: true
 };
 
 var ERROR_BUTTON_NOT_PRESSED = 101;
@@ -29,20 +30,35 @@ var ERROR_DEVICE_OFF = 201;
 //
 var Ambilight = {
 	registerTimout: 4,
-	swatchesColors: [
-		{name: 'Light Purple', r:137, g:43, b:226, hex:'892BE2', turnOn:1, brightness:50, transition:100},
-		{name: 'Blue', r:0, g:0, b:255, hex:'0000FF', turnOn:1, brightness:50, transition:100},
-		{name: 'Aqua', r:0, g:255, b:255, hex:'00FFFF', turnOn:1, brightness:50, transition:100},
-		{name: 'Light Red', r:165, g:40, b:40, hex:'A52828', turnOn:1, brightness:50, transition:100},
-		{name: 'Red', r:255, g:0, b:0, hex:'FF0000', turnOn:1, brightness:50, transition:100},
-		{name: 'Light Green', r:127, g:255, b:40, hex:'7FFF28', turnOn:1, brightness:50, transition:100},
-		{name: 'Orange', r:255, g:127, b:0, hex:'FF7F28', turnOn:1, brightness:50, transition:100},
-		{name: 'Pink', r:255, g:20, b:147, hex:'FF1493', turnOn:1, brightness:50, transition:100},
-		{name: 'Yellow', r:255, g:200, b:0, hex:'FFC800', turnOn:1, brightness:50, transition:100},
-		{name: 'White', r:255, g:255, b:255, hex:'FFFFFF', turnOn:1, brightness:50, transition:100},
-		{name: 'Grey', r:111, g:111, b:111, hex:'6F6F6F', turnOn:1, brightness:0, transition:100},
-		{name: 'Black', r:0, g:0, b:0, hex:'000000', turnOn:0, brightness:0, transition:100}
-	]
+	swatchesColorsMapping: {
+		'892BE2': {name: 'Light Purple', r:137, g:43, b:226, turnOn:true, brightness:50},
+		'c8bfe7': {name: 'Light Purple', r:137, g:43, b:226, turnOn:true, brightness:50},
+		'0000FF': {name: 'Blue', r:0, g:0, b:255, turnOn:true, brightness:50},
+		'44859d': {name: 'Blue', r:0, g:0, b:255, turnOn:true, brightness:50},
+		'00FFFF': {name: 'Aqua', r:0, g:255, b:255, turnOn:true, brightness:50},
+		'A52828': {name: 'Light Red', r:165, g:40, b:40, turnOn:true, brightness:50},
+		'FF0000': {name: 'Red', r:255, g:0, b:0, turnOn:true, brightness:50},
+		'7FFF28': {name: 'Light Green', r:127, g:255, b:40, turnOn:true, brightness:50},
+		'00ff60': {name: 'Green', r:0, g:255, b:0, turnOn:true, brightness:0},
+		'869647': {name: 'Green', r:0, g:255, b:0, turnOn:true, brightness:0},
+		'659647': {name: 'Green', r:0, g:255, b:0, turnOn:true, brightness:0},
+		'FF7F28': {name: 'Orange', r:255, g:127, b:0, turnOn:true, brightness:50},
+		'967f47': {name: 'Orange', r:255, g:127, b:0, turnOn:true, brightness:0},
+		'FF1493': {name: 'Pink', r:255, g:20, b:147, turnOn:true, brightness:50},
+		'ffaec9': {name: 'Pink Light', r:255, g:20, b:147, turnOn:true, brightness:0},
+		'FFC800': {name: 'Yellow', r:255, g:200, b:0, turnOn:true, brightness:50},
+		'FFFFFF': {name: 'White', r:255, g:255, b:255, turnOn:true, brightness:50},
+		'6F6F6F': {name: 'Grey', r:111, g:111, b:111, turnOn:true, brightness:0},
+		'c3c3c3': {name: 'Grey', r:111, g:111, b:111, turnOn:true, brightness:0},
+		'000000': {name: 'Black', r:0, g:0, b:0, turnOn:false, brightness:0},
+		'008aff': {name: 'Blue Marine', r:0, g:0, b:150, turnOn:true, brightness:50},
+		'00e4ff': {name: 'Blue Truquoise', r:135, g:60, b:249 , turnOn:true, brightness:100},
+	}
+};
+
+// Executed one time at startup
+Ambilight.init = function () {
+
 };
 
 // Return an instance of the authenticated api (singleton)
@@ -53,6 +69,7 @@ Ambilight.getAuthenticatedApi = function () {
 
 	var config = Ambilight.getConfiguration();
 	api = new HueApi(config.hostname, config.token);
+	Ambilight.init();
 	return api;
 };
 
@@ -187,10 +204,17 @@ Ambilight.changeLightColor = function (lightId, opts, callback) {
 	var r = stateOptions.r,
 		g = stateOptions.g,
 		b = stateOptions.b,
+		turnOn = stateOptions.turnOn,
 		transition = stateOptions.transition,
 		brightness = stateOptions.brightness;
 
-	var state = lightState.create().on().transition(transition).rgb(r, g, b).bri(brightness);
+	var state = lightState.create().on();
+
+	if (turnOn) {
+		state = state.transition(transition).rgb(r, g, b).bri(brightness);
+	} else {
+		state = state.transition(transition).off();
+	}
 
 	Ambilight.getAuthenticatedApi().setLightState(lightId, state)
 		.then(callback)
@@ -207,17 +231,31 @@ Ambilight.changeLightColor = function (lightId, opts, callback) {
 	;
 };
 
-// Change the color of a given light bulb
-Ambilight.changeLightColorFromSwatches = function (lightId, rgb, callback) {
 
-	ColorManipulator
-	var stateOptions = Utils.mergeArgs(opts, defaultChangeLightColorArgs);
-	var r = stateOptions.r,
-		g = stateOptions.g,
-		b = stateOptions.b,
-		transition = stateOptions.transition,
-		brightness = stateOptions.brightness;
+// Generate the swatches array
+Ambilight.generateSwatchesHex = function() {
+	Ambilight.swatchesColorsHexCodes = [];
 
+	for (var hex in Ambilight.swatchesColorsMapping) {
+		var swatche = Ambilight.swatchesColorsMapping[hex];
+		Ambilight.swatchesColorsHexCodes.push(hex);
+	}
+
+	return Ambilight.swatchesColorsHexCodes;
+};
+
+// Change the color of a given light bulb following the swatches
+Ambilight.changeLightColorFromSwatches = function (lightId, opt, callback) {
+
+	var hex = ColorManipulator.rgbToHex(opt.r, opt.g, opt.b);
+	var swatches = Ambilight.swatchesColorsHexCodes === undefined
+		? Ambilight.generateSwatchesHex()
+		: Ambilight.swatchesColorsHexCodes;
+
+	var closestHex = ColorManipulator.getClosestColor(swatches, hex);
+	var swatche = Ambilight.swatchesColorsMapping[closestHex];
+
+	Ambilight.changeLightColor(lightId, swatche, callback);
 };
 
 // Create a new light state and use it directly

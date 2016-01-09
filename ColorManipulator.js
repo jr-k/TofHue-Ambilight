@@ -126,8 +126,8 @@ ColorManipulator.findAverageColor = function (colorList, hex) {
 
 // Get distance between 2 HEX colors
 ColorManipulator.getColorDistanceBetween = function (source, target) {
-	source = source.replace('#','',source);
-	target = target.replace('#','',target);
+	source = source.replace('#','',source.toLowerCase());
+	target = target.replace('#','',target.toLowerCase());
 
 	if (!source.length || !target.length) return 0;
 

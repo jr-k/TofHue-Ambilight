@@ -11,7 +11,7 @@ var Y = 1;
 
 var defaultScanOptions = {
 	deltaX:		10,
-	deltaY:		200,
+	deltaY:		150,
 	columns: 	2,
 	iterLimit: 	400,
 	averageMode: false
@@ -112,7 +112,7 @@ Scanner.scanForDominantColor = function (offsetX, opts) {
 	for (var i = 0; i < columns; i++) {
 		scannedColors = Scanner.scanScreenUntil(
 			// Initial position
-			[(Math.floor(offsetX) - deltaX) + i * deltaX,0],
+			[(Math.floor(offsetX)) + i * deltaX,0],
 			// Scanner movement
 			[0,deltaY],
 			// Limit
@@ -145,7 +145,7 @@ Scanner.scanOnRightScreen = function(opts) {
 };
 
 Scanner.scanOnCenterScreen = function(opts) {
-	return Scanner.scanForDominantColor(screenSize.width/2, Utils.mergeArgs(opts, defaultScanOptions));
+	return Scanner.scanForDominantColor(screenSize.width/3, Utils.mergeArgs(opts, defaultScanOptions));
 };
 
 module.exports = Scanner;
