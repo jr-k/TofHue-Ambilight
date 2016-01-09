@@ -1,0 +1,22 @@
+{
+  "name": "tofhue",
+  "version": "1.0.0",
+  "description": "HUE Ambilight for Laptop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "JRK",
+  "license": "ISC",
+  "dependencies": {
+    "colour-extractor": "^0.2.1",
+    "desktop-screenshot": "0.0.6",
+    "dominant-color": "0.0.1",
+    "easyimage": "^2.1.0",
+    "hue-util": "^1.1.4",
+    "jimp": "^0.2.21",
+    "node-hue-api": "^2.0.0",
+    "robotjs": "^0.3.7",
+    "three": "^0.73.0"
+  }
+}
