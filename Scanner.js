@@ -137,11 +137,11 @@ Scanner.scanForDominantColor = function (offsetX, opts) {
 };
 
 Scanner.scanOnLeftScreen = function(opts) {
-	return Scanner.scanForDominantColor(0, Utils.mergeArgs(opts, defaultScanOptions));
+	return Scanner.scanForDominantColor(90, Utils.mergeArgs(opts, defaultScanOptions));
 };
 
 Scanner.scanOnRightScreen = function(opts) {
-	return Scanner.scanForDominantColor(screenSize.width, Utils.mergeArgs(opts, defaultScanOptions));
+	return Scanner.scanForDominantColor(screenSize.width - 90, Utils.mergeArgs(opts, defaultScanOptions));
 };
 
 Scanner.scanOnCenterScreen = function(opts) {

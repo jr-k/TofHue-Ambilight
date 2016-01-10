@@ -18,7 +18,7 @@ var defaultChangeLightColorArgs = {
 	g: 0,
 	b: 0,
 	brightness: 50,
-	transition: 150,
+	transition: 400,
 	turnOn: true
 };
 
@@ -50,7 +50,8 @@ var Ambilight = {
 		'FFFFFF': {name: 'White', r:255, g:255, b:255, turnOn:true, brightness:50},
 		'6F6F6F': {name: 'Grey', r:111, g:111, b:111, turnOn:true, brightness:0},
 		'c3c3c3': {name: 'Grey', r:111, g:111, b:111, turnOn:true, brightness:0},
-		'000000': {name: 'Black', r:0, g:0, b:0, turnOn:false, brightness:0},
+//		'000000': {name: 'Black', r:0, g:0, b:0, turnOn:false, brightness:0},
+		'000000': {name: 'Black', r:111, g:111, b:111, turnOn:true, brightness:0},
 		'008aff': {name: 'Blue Marine', r:0, g:0, b:150, turnOn:true, brightness:50},
 		'00e4ff': {name: 'Blue Truquoise', r:135, g:60, b:249 , turnOn:true, brightness:100},
 	}
