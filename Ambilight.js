@@ -8,7 +8,6 @@ var filesystem = require('fs');
 var Utils = require('./Utils');
 var ColorManipulator = require('./ColorManipulator');
 
-var username = 'TofHue Amiblight';
 var configFilename = './tofhue.json';
 var registerIfNoConfiguration = true;
 var token = null;
@@ -22,6 +21,7 @@ var defaultChangeLightColorArgs = {
 	turnOn: true
 };
 
+var ERROR_USERNAME_MISSING = 0;
 var ERROR_BUTTON_NOT_PRESSED = 101;
 var ERROR_DEVICE_OFF = 201;
 
@@ -29,7 +29,9 @@ var ERROR_DEVICE_OFF = 201;
 // Class
 //
 var Ambilight = {
-	registerTimout: 4,
+	username: 'TofHUE Ambilight',
+	registerTimout: 30,
+	lightState: lightState,
 	swatchesColorsMapping: {
 		'892BE2': {name: 'Light Purple', r:137, g:43, b:226, turnOn:true, brightness:50},
 		'c8bfe7': {name: 'Light Purple', r:137, g:43, b:226, turnOn:true, brightness:50},
@@ -69,9 +71,14 @@ Ambilight.getAuthenticatedApi = function () {
 	}
 
 	var config = Ambilight.getConfiguration();
+
+	if (config) {
 	api = new HueApi(config.hostname, config.token);
 	Ambilight.init();
 	return api;
+	}
+
+	throw new Error('You aren\'t connected to any bridge.');
 };
 
 
@@ -124,14 +131,15 @@ Ambilight.registerOnBridge = function (bridge, callback) {
 	api = new HueApi();
 	var stopWatch = 0;
 	var registering = setInterval(function(){
-		api.registerUser(bridge.ipaddress, username)
-			.then(function(token){
+		api.registerUser(bridge.ipaddress, Ambilight.username)
+			.then(function(result){
 				console.log('===================');
 				console.log('Connected !');
 				console.log('===================');
 				console.log("Generated token", result);
 
 				filesystem.writeFileSync(configFilename, JSON.stringify({
+					username: Ambilight.username,
 					hostname: bridge.ipaddress,
 					token: result
 				}));
@@ -142,13 +150,15 @@ Ambilight.registerOnBridge = function (bridge, callback) {
 					callback(true);
 			})
 			.fail(function(err){
-				if (err.type !== ERROR_BUTTON_NOT_PRESSED) {
+				if (err.type !== ERROR_BUTTON_NOT_PRESSED && err.type !== ERROR_USERNAME_MISSING) {
+					console.log('===================');
+					console.log('Error on registration !');
+					console.log('===================');
 					console.log(err);
 				}
 			})
 			.done()
 		;
-		stopWatch++;
 
 		if (stopWatch >= Ambilight.registerTimout) {
 			clearInterval(registering);
@@ -157,9 +167,15 @@ Ambilight.registerOnBridge = function (bridge, callback) {
 			if (callback)
 				callback(false);
 		} else {
-			console.log("You have", Ambilight.registerTimout - stopWatch ,"seconds left to push the button on the bridge");
+			var leftTime = Ambilight.registerTimout - stopWatch;
+			var unit = leftTime > 1 ? 'seconds' : 'second';
+			console.log("You have", leftTime, unit, "left to push the button on the bridge");
 		}
+
+		stopWatch++;
 	},1000);
+
+
 };
 
 
@@ -191,9 +207,25 @@ Ambilight.getLightBulbs = function (callback) {
 	;
 };
 
+// Returns the list of all groups registered to the current bridge
+Ambilight.getGroups = function (callback) {
+	Ambilight.getAuthenticatedApi().groups()
+		.then(callback)
+		.done()
+	;
+};
+
 // Change light state of a given light bulb (Direct Input Mode)
 Ambilight.changeLightState = function (lightId, state, callback) {
 	Ambilight.getAuthenticatedApi().setLightState(lightId, state)
+		.then(callback)
+		.done()
+	;
+};
+
+// Change light state of a given light bulb (Direct Input Mode)
+Ambilight.changeGroupLightState = function (groupId, state, callback) {
+	Ambilight.getAuthenticatedApi().setGroupLightState(groupId, state)
 		.then(callback)
 		.done()
 	;
