@@ -1,5 +1,7 @@
 var Application = require('./Application');
 
+// node huenow 0 0 255 0 0 255
+
 var L = process.argv[2];	// Light ID (0 = all)
 var F = process.argv[3];	// Infinite timeout (0 = off)
 var R = process.argv[4];	// Red (0-255)	
