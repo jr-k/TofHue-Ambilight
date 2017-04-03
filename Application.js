@@ -9,6 +9,7 @@ var Scanner = require('./Scanner');
 //
 var Application = {
 	refreshRate: 100,
+	DEFAULT_LIGHT_ID: 1,
 	SCAN_LEFT: 'left',
 	SCAN_CENTER: 'center',
 	SCAN_RIGHT: 'right'
@@ -32,26 +33,36 @@ Application.getScanPosition = function (position, opts) {
 	}
 };
 
+Application.initNewSetup = function() {
+	Ambilight.searchBridge(true, function() {
+		console.log('Done !');
+	});
+}
+
+Application.changeLightColor = function (lightId, r, g, b, brightness) {
+	Ambilight.changeLightColor(lightId, {r:r,g:g,b:b,brightness:brightness});
+};
+
 Application.startIntervalColorMode = function (position, opts) {
 	setInterval(function(){
-		Ambilight.changeLightColor(2, Application.getScanPosition(position, opts));
+		Ambilight.changeLightColor(Application.DEFAULT_LIGHT_ID, Application.getScanPosition(position, opts));
 	}, Application.refreshRate);
 };
 
 Application.startIntervalSwatchesMode = function (position, opts) {
 	setInterval(function(){
-		Ambilight.changeLightColorFromSwatches(2, Application.getScanPosition(position, opts));
+		Ambilight.changeLightColorFromSwatches(Application.DEFAULT_LIGHT_ID, Application.getScanPosition(position, opts));
 	}, Application.refreshRate);
 };
 
 Application.startCallbackColorMode = function (position, opts) {
-	Ambilight.changeLightColor(2, Application.getScanPosition(position, opts), function(){
+	Ambilight.changeLightColor(Application.DEFAULT_LIGHT_ID, Application.getScanPosition(position, opts), function(){
 		setTimeout(Application.startCallbackColorMode,1);
 	});
 };
 
 Application.startCallbackSwatchesMode = function (position, opts) {
-	Ambilight.changeLightColorFromSwatches(2, Application.getScanPosition(position, opts), function(){
+	Ambilight.changeLightColorFromSwatches(Application.DEFAULT_LIGHT_ID, Application.getScanPosition(position, opts), function(){
 		setTimeout(Application.startCallbackSwatchesMode,1);
 	});
 };

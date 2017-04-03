@@ -1,3 +1,4 @@
 var Application = require('./Application');
 
-Application.startCallbackSwatchesMode(Application.SCAN_CENTER);
+//Application.initNewSetup();
+Application.startCallbackColorMode(Application.SCAN_CENTER);
