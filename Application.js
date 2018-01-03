@@ -36,6 +36,8 @@ Application.getScanPosition = function (position, opts) {
 Application.initNewSetup = function() {
 	Ambilight.searchBridge(true, function() {
 		console.log('Done !');
+	}, function() {
+		console.log('No bridge found in your local network');
 	});
 }
 

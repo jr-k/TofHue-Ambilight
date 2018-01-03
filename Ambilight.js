@@ -103,7 +103,11 @@ Ambilight.getConfiguration = function() {
 };
 
 // Search for bridges and register
-Ambilight.searchBridge = function (registerForFirstBridge, callback) {
+Ambilight.searchBridge = function (registerForFirstBridge, callback, errCallback) {
+	if (typeof errCallback !== 'function') {
+		errCallback = function(){};
+	}
+	
 	hue.nupnpSearch()
 		.then(function(bridges) {
 			if (bridges.length > 0) {
@@ -119,9 +123,11 @@ Ambilight.searchBridge = function (registerForFirstBridge, callback) {
 				} else if (callback) {
 					callback(bridges);
 				}
+			} else {
+				errCallback();
 			}
 		})
-		.fail(callback)
+		.fail(errCallback)
 		.done()
 	;
 };
