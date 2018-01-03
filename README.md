@@ -13,7 +13,7 @@ Use
 // node huenow 0 0 255 0 0 255
 
 var L = process.argv[2];	// Light ID (0 = all)
-var F = process.argv[3];	// Infinite timeout (0 = onetime) (-1 = lightoff)
+var F = process.argv[3];	// Infinite timeout (interval time in ms) (0 = onetime) (-1 = lightoff)
 var R = process.argv[4];	// Red (0-255)	
 var G = process.argv[5];	// Green (0-255)
 var B = process.argv[6];	// Blue (0-255)
