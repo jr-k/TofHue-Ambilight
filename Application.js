@@ -8,6 +8,7 @@ var Scanner = require('./Scanner');
 // Class
 //
 var Application = {
+	API: Ambilight,
 	refreshRate: 100,
 	DEFAULT_LIGHT_ID: 1,
 	SCAN_LEFT: 'left',

@@ -213,6 +213,14 @@ Ambilight.getLightBulbs = function (callback) {
 	;
 };
 
+// Returns the light status for a given bulb
+Ambilight.getLightBulbState = function (bulbId, callback) {
+	Ambilight.getAuthenticatedApi().lightStatus(bulbId)
+		.then(callback)
+		.done()
+	;
+};
+
 // Returns the list of all groups registered to the current bridge
 Ambilight.getGroups = function (callback) {
 	Ambilight.getAuthenticatedApi().groups()
