@@ -258,7 +258,15 @@ Ambilight.changeLightColor = function (lightId, opts, callback) {
 	var state = lightState.create().on();
 
 	if (turnOn) {
-		state = state.transition(transition).rgb(r, g, b).bri(brightness);
+		if (r !== null && g !== null && b !== null) {
+			state = state.transition(transition).rgb(r, g, b);
+		} else {
+			state = state.transition(transition).on();
+		}
+
+		if (brightness !== null) {
+			state = state.bri(brightness);
+		}
 	} else {
 		state = state.transition(transition).off();
 	}

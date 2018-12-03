@@ -1,6 +1,6 @@
 {
   "name": "tofhue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "HUE Ambilight for Laptop",
   "main": "index.js",
   "scripts": {

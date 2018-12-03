@@ -12,12 +12,16 @@ var enumF = {
 	TOGGLE: -2
 };
 
-var L = process.argv[2];	// Light ID (0 = ALL or use comma separated values)
-var F = process.argv[3];	// Infinite timeout (0 = ON) (-1 = OFF) (-2 = TOGGLE)
-var R = process.argv[4];	// Red (0-255)	
-var G = process.argv[5];	// Green (0-255)
-var B = process.argv[6];	// Blue (0-255)
-var N = process.argv[7]; 	// Brightness (0-255)
+var L = process.argv[2] || 0;		// Light ID (0 = ALL or use comma separated values)
+var F = process.argv[3] || -2;		// Infinite timeout (0 = ON) (-1 = OFF) (-2 = TOGGLE)
+var R = process.argv[4] || null;	// Red (0-255)
+var G = process.argv[5] || null;	// Green (0-255)
+var B = process.argv[6] || null;	// Blue (0-255)
+var N = process.argv[7] || null;	// Brightness (0-255)
+
+if (R == "null") R = null;
+if (G == "null") G = null;
+if (B == "null") B = null;
 
 if (typeof enumL[L.toUpperCase()] !== 'undefined') {
 	L = enumL[L.toUpperCase()] + "";
@@ -62,7 +66,7 @@ var colorSwitch = function() {
 				if (baseState) {
 					Application.turnOffLight(bulb.id);
 				} else {
-					Application.changeLightColor(bulb.id,R,G,B,N);
+					Application.turnOnLight(bulb.id,R,G,B,N);
 				}
 			}  else {
 				Application.changeLightColor(bulb.id,R,G,B,N);
@@ -76,7 +80,7 @@ var colorSwitch = function() {
 				if (baseState) {
 					Application.turnOffLight(bulbId);
 				} else {
-					Application.changeLightColor(bulbId,R,G,B,N);
+					Application.turnOnLight(bulbId,R,G,B,N);
 				}
 			} else {
 				Application.changeLightColor(bulbId,R,G,B,N);

@@ -50,6 +50,10 @@ Application.turnOffLight = function (lightId) {
 	Ambilight.changeLightColor(lightId, {turnOn:false, r:255,g:255,b:255,brightness:255});
 };
 
+Application.turnOnLight = function (lightId, r, g, b, brightness) {
+	Ambilight.changeLightColor(lightId, {turnOn:true, r:r,g:g,b:b,brightness:brightness});
+};
+
 Application.startIntervalColorMode = function (position, opts) {
 	setInterval(function(){
 		Ambilight.changeLightColor(Application.DEFAULT_LIGHT_ID, Application.getScanPosition(position, opts));
